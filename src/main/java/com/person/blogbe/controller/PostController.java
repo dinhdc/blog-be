@@ -1,7 +1,9 @@
 package com.person.blogbe.controller;
 
 import com.person.blogbe.payload.PostDto;
+import com.person.blogbe.payload.PostResponse;
 import com.person.blogbe.service.PostService;
+import com.person.blogbe.utils.AppConstants;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,8 +26,13 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PostDto>> getPosts() {
-        return new ResponseEntity<>(this.postService.getPosts(), HttpStatus.OK);
+    public ResponseEntity<PostResponse> getPosts(
+            @RequestParam(value = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NO, required = false) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
+            @RequestParam(value = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY, required = false) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_ORDER, required = false) String sortDir
+    ) {
+        return new ResponseEntity<>(this.postService.getPosts(pageNo, pageSize, sortBy, sortDir), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
