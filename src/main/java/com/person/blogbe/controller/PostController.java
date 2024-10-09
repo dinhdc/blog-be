@@ -4,6 +4,7 @@ import com.person.blogbe.payload.PostDto;
 import com.person.blogbe.payload.PostResponse;
 import com.person.blogbe.service.PostService;
 import com.person.blogbe.utils.AppConstants;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,7 @@ public class PostController {
     }
 
     @PostMapping
-    public ResponseEntity<PostDto> createPost(@RequestBody PostDto postDto) {
+    public ResponseEntity<PostDto> createPost(@Valid @RequestBody PostDto postDto) {
         return new ResponseEntity<>(this.postService.createPost(postDto), HttpStatus.CREATED);
     }
 
@@ -41,7 +42,7 @@ public class PostController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PostDto> updatePost(@PathVariable("id") long id, @RequestBody PostDto postDto) {
+    public ResponseEntity<PostDto> updatePost(@PathVariable("id") long id, @Valid @RequestBody PostDto postDto) {
         return new ResponseEntity<>(this.postService.updatePost(id, postDto), HttpStatus.OK);
     }
 

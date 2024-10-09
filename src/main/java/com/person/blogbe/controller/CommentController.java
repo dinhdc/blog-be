@@ -2,6 +2,7 @@ package com.person.blogbe.controller;
 
 import com.person.blogbe.payload.CommentDto;
 import com.person.blogbe.service.CommentService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
@@ -20,8 +21,11 @@ public class CommentController {
     }
 
     @PostMapping("posts/{id}/comments")
-    public ResponseEntity<CommentDto> createComment(@PathVariable("id") Long postId, @RequestBody CommentDto commentDto) {
-        return new ResponseEntity<CommentDto>(this.commentService.createComment(postId, commentDto), HttpStatus.CREATED);
+    public ResponseEntity<CommentDto> createComment(
+            @PathVariable("id") Long postId,
+            @Valid @RequestBody CommentDto commentDto) {
+        return new ResponseEntity<CommentDto>(this.commentService.createComment(postId, commentDto),
+                HttpStatus.CREATED);
     }
 
     @GetMapping("posts/{postId}/comments")
@@ -41,9 +45,10 @@ public class CommentController {
     public ResponseEntity<CommentDto> updateComment(
             @PathVariable("postId") Long postId,
             @PathVariable("commentId") Long commentId,
-            @RequestBody CommentDto commentDto
+            @Valid @RequestBody CommentDto commentDto
     ) {
-        return new ResponseEntity<>(this.commentService.updateComment(postId, commentId, commentDto), HttpStatus.OK);
+        return new ResponseEntity<>(this.commentService.updateComment(postId, commentId, commentDto),
+                HttpStatus.OK);
     }
 
     @DeleteMapping("posts/{postId}/comments/{commentId}")

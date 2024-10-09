@@ -6,7 +6,7 @@ import com.person.blogbe.payload.PostDto;
 import com.person.blogbe.payload.PostResponse;
 import com.person.blogbe.repository.PostRepository;
 import com.person.blogbe.service.PostService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,28 +20,21 @@ public class PostServiceImpl implements PostService {
 
 
     private final PostRepository postRepository;
+    private ModelMapper mapper;
 
-    @Autowired
-    public PostServiceImpl(PostRepository postRepository) {
+    public PostServiceImpl(PostRepository postRepository, ModelMapper mapper) {
         this.postRepository = postRepository;
+        this.mapper = mapper;
     }
 
     @Override
     public PostDto createPost(PostDto postDto) {
         // convert DTO to entity
-        Post post = new Post();
-        post.setTitle(postDto.getTitle());
-        post.setContent(postDto.getContent());
-        post.setDescription(postDto.getDescription());
+        Post post = this.mapToEntity(postDto);
         Post newPost = this.postRepository.save(post);
 
         // convert entity to DTO
-        PostDto postRes = new PostDto();
-        postRes.setTitle(newPost.getTitle());
-        postRes.setContent(newPost.getContent());
-        postRes.setDescription(newPost.getDescription());
-        postRes.setId(newPost.getId());
-        return postRes;
+        return this.mapToDto(newPost);
     }
 
 
@@ -72,13 +65,15 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostDto getPostById(Long id) {
-        Post post = this.postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "id", id.toString()));
+        Post post = this.postRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Post", "id", id.toString()));
         return mapToDto(post);
     }
 
     @Override
     public PostDto updatePost(Long id, PostDto postDto) {
-        Post post = this.postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "id", id.toString()));
+        Post post = this.postRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Post", "id", id.toString()));
         post.setTitle(postDto.getTitle());
         post.setContent(postDto.getContent());
         post.setDescription(postDto.getDescription());
@@ -88,16 +83,16 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void deletePost(Long id) {
-        Post post = this.postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "id", id.toString()));
+        Post post = this.postRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Post", "id", id.toString()));
         postRepository.delete(post);
     }
 
     private PostDto mapToDto(Post post) {
-        PostDto postDto = new PostDto();
-        postDto.setId(post.getId());
-        postDto.setTitle(post.getTitle());
-        postDto.setContent(post.getContent());
-        postDto.setDescription(post.getDescription());
-        return postDto;
+        return this.mapper.map(post, PostDto.class);
+    }
+
+    private Post mapToEntity(PostDto postDto) {
+        return this.mapper.map(postDto, Post.class);
     }
 }
