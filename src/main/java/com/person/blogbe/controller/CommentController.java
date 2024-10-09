@@ -5,7 +5,6 @@ import com.person.blogbe.service.CommentService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,7 +23,7 @@ public class CommentController {
     public ResponseEntity<CommentDto> createComment(
             @PathVariable("id") Long postId,
             @Valid @RequestBody CommentDto commentDto) {
-        return new ResponseEntity<CommentDto>(this.commentService.createComment(postId, commentDto),
+        return new ResponseEntity<>(this.commentService.createComment(postId, commentDto),
                 HttpStatus.CREATED);
     }
 
